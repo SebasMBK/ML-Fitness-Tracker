@@ -161,3 +161,6 @@ cython_debug/
 
 # Desktop ini files
 desktop.ini
+
+# Pipenv files
+Pipfile.lock
