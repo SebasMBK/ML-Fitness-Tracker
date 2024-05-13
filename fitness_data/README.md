@@ -6,3 +6,4 @@ There are two types of sources: "Accelerometer" and "Gyroscope". The difference 
 - Two types of sets were performed: Light and Heavy.
 - 5 different subjects (A, B, C, D and E) performed the exercises.
 - The files prefix indicate to which subject the files belong to.
+- The gyro and accelerometer data record information in different frequencies.
