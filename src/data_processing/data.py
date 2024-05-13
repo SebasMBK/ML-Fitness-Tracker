@@ -1,6 +1,13 @@
 import pandas as pd
+import os
+from pathlib import Path
 from glob import glob
-from hashlib import sha256
+from hashlib import md5
+
+def get_files_directory() -> str:
+    path = Path(__file__).parent.parent.parent
+    data_dir_path = str(path.joinpath("fitness_data", "*.csv"))
+    return data_dir_path
 
 def get_all_files_in_directory(dir_path: str) -> list[str]:
     """
@@ -15,7 +22,7 @@ def get_all_files_in_directory(dir_path: str) -> list[str]:
     return files
 
 def read_data_into_dataframe(files_list: list, file_type: str) -> pd.DataFrame:
-    df_list = [pd.read_csv(file).assign(filename=file.split("\\")[2]) for file in files_list if file_type in file]
+    df_list = [pd.read_csv(file).assign(filename=os.path.basename(file)) for file in files_list if file_type in file]
     df = pd.concat(df_list, ignore_index=True)
     # Renaming columns
     if file_type == "Accelerometer":
@@ -40,25 +47,25 @@ def read_data_into_dataframe(files_list: list, file_type: str) -> pd.DataFrame:
                 "z-axis (deg/s)": "z_axis_deg_s"
             }
         )
+    else:
+        raise ValueError("Error: Invalid file_type. Correct values are 'Acceleromenter' or 'Gyroscope'.")
     return df
 
-def create_id_sha256(row):
+def create_id(row) -> pd.Series:
     concat_string = ''.join(row.astype(str))
-    sha256_hash = sha256(concat_string.encode()).hexdigest()
+    sha256_hash = md5(concat_string.encode()).hexdigest()
     return sha256_hash
 
-def extract_features_from_filename_column(df: pd.DataFrame):
+def extract_features_from_filename_column(df: pd.DataFrame) -> pd.DataFrame:
     df["participant"] = df["filename"].str.split("-").str[0]
     df["label"] = df["filename"].str.split("-").str[1]
     df["category"] = df["filename"].str.split("-").str[2].str.split("_").str[0].str.rstrip("123")
-    df["id"] = df.apply(create_id_sha256, axis=1)
+    df["id"] = df.apply(create_id, axis=1)
     return df
 
 if __name__ == '__main__':
-    directory = '**/fitness_data/'
-    wild_card = '*.csv'
-    dir_path = f"{directory}{wild_card}"
-    files_list = get_all_files_in_directory(dir_path=dir_path)
+    data_dir_path = get_files_directory()
+    files_list = get_all_files_in_directory(dir_path=data_dir_path)
     df_acc = read_data_into_dataframe(files_list=files_list, file_type="Accelerometer")
     df_gyr = read_data_into_dataframe(files_list=files_list, file_type="Gyroscope")
     df_acc_with_features = extract_features_from_filename_column(df=df_acc)
