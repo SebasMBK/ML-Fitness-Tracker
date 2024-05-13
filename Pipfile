@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 pandas = "*"
+sqlalchemy = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
