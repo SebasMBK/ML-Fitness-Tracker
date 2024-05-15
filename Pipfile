@@ -7,6 +7,7 @@ name = "pypi"
 pandas = "*"
 sqlalchemy = "*"
 psycopg2 = "*"
+matplotlib = "*"
 
 [dev-packages]
 
