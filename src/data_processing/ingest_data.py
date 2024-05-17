@@ -5,6 +5,7 @@ from glob import glob
 from hashlib import md5
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+from ..common_functions.data_common_functions import create_id
 
 def get_files_directory() -> str:
     path = Path(__file__).parent.parent.parent
@@ -53,11 +54,6 @@ def read_data_into_dataframe(files_list: list, file_type: str) -> pd.DataFrame:
             }
         )
     return df
-
-def create_id(row) -> pd.Series:
-    concat_string = ''.join(row.astype(str))
-    sha256_hash = md5(concat_string.encode()).hexdigest()
-    return sha256_hash
 
 def extract_features_from_filename_column(df: pd.DataFrame) -> pd.DataFrame:
     df["participant"] = df["filename"].str.split("-").str[0]
