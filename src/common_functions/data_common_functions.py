@@ -17,7 +17,6 @@ def create_id(row) -> pd.Series:
     sha256_hash = md5(concat_string.encode()).hexdigest()
     return sha256_hash
 
-
 def resample_frequency(df: pd.DataFrame) -> pd.DataFrame:
     # Sampling rule
     sampling_rule = {
@@ -44,12 +43,10 @@ def resample_frequency(df: pd.DataFrame) -> pd.DataFrame:
     df_resampled["id"] = df_resampled.apply(create_id, axis=1).astype("string")
     return df_resampled
 
-
 def get_files_directory() -> str:
     path = Path(__file__).parent.parent.parent
     data_dir_path = str(path.joinpath("fitness_data", "*.csv"))
     return data_dir_path
-
 
 def get_all_files_in_directory(dir_path: str) -> list[str]:
     """
@@ -63,14 +60,12 @@ def get_all_files_in_directory(dir_path: str) -> list[str]:
     files = glob(dir_path, recursive=True)
     return files
 
-
 def extract_features_from_filename_column(df: pd.DataFrame) -> pd.DataFrame:
     df["participant"] = df["filename"].str.split("-").str[0]
     df["label"] = df["filename"].str.split("-").str[1]
     df["category"] = df["filename"].str.split("-").str[2].str.split("_").str[0].str.rstrip("123")
     df["id"] = df.apply(create_id, axis=1)
     return df
-
 
 def get_datetime_from_epoch(df: pd.DataFrame) -> pd.DataFrame:
     df.index = pd.to_datetime(df["epoch_ms"], unit="ms")
@@ -120,7 +115,6 @@ def read_data_into_dataframe(files_list: list, file_type: str) -> pd.DataFrame:
         )
     return df
 
-
 def read_sql_table(table_schema: str,
                    table_name: str,
                    username: str,
@@ -147,7 +141,6 @@ def read_sql_table(table_schema: str,
         engine.dispose()
     return df
 
-
 def insert_to_stg(df: pd.DataFrame, table_schema: str,
                   table_name: str, username: str,
                   password: str, hostname: str,
@@ -169,7 +162,6 @@ def insert_to_stg(df: pd.DataFrame, table_schema: str,
         raise SQLAlchemyError(f"An error ocurred while inserting the stg data: {e}")
     finally:
         engine.dispose()
-
 
 def incremental_insert(df: pd.DataFrame, table_schema: str,
                   table_name: str, username: str,
