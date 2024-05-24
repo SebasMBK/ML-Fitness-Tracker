@@ -141,7 +141,7 @@ def read_sql_table(table_schema: str,
         engine.dispose()
     return df
 
-def insert_to_stg(df: pd.DataFrame, table_schema: str,
+def full_load(df: pd.DataFrame, table_schema: str,
                   table_name: str, username: str,
                   password: str, hostname: str,
                   port: int, database: str) -> None:
@@ -159,7 +159,7 @@ def insert_to_stg(df: pd.DataFrame, table_schema: str,
             index=True
         )
     except SQLAlchemyError as e:
-        raise SQLAlchemyError(f"An error ocurred while inserting the stg data: {e}")
+        raise SQLAlchemyError(f"An error ocurred while inserting the data: {e}")
     finally:
         engine.dispose()
 
